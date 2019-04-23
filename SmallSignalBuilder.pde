@@ -3,7 +3,7 @@
 
 public class SmallSignalBuilder implements SignalBuilder {
 
-    private static final byte BITS[] = {1, 2, 4, 8, 16, 32, 64, -128};
+    private final byte BITS[] = {1, 2, 4, 8, 16, 32, 64, -128};
 
     public SmallSignalBuilder() {}
 

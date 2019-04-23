@@ -2,8 +2,9 @@ import java.lang.System.*;
 
 public class StateMachine {
 
-    private static final long FORWARD_TRANSITION_TIME_MS = 400;
-    private static final long BACKWARD_TRANSITION_TIME_MS = 10;
+    // TODO: change me
+    private static final long FORWARD_TRANSITION_TIME_MS = 100;
+    private static final long BACKWARD_TRANSITION_TIME_MS = 500;
 
     private boolean mRequiredOutput;
     private boolean mDesiredInput;
@@ -42,6 +43,7 @@ public class StateMachine {
 
     private void continueTransition() {
         long timeSinceStartOfTransition = System.currentTimeMillis() - mLastTransitionStartTime;
+        print(timeSinceStartOfTransition + "ms");
         if (timeSinceStartOfTransition >= mRequiredTransitionTime) {
             mInTransition = false; // End the transition
             mRequiredOutput = false; // No longer need to be pulsing high

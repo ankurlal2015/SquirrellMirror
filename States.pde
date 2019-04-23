@@ -13,6 +13,9 @@ public class States {
         mStateMachines = new StateMachine[rows][];
         for (int i = 0; i < rows; i++) {
             mStateMachines[i] = new StateMachine[cols];
+            for (int s = 0; s < cols; s++) {
+               mStateMachines[i][s] = new StateMachine(); 
+            }
         }
     }
 
@@ -28,7 +31,7 @@ public class States {
         return mCols;
     }
 
-    public void getOutput(int x, int y) {
+    public boolean getOutput(int x, int y) {
         return mStateMachines[y][x].getRequiredOutput();
     }
 }

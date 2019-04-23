@@ -14,7 +14,7 @@ int minDepth = 700;
 int maxDepth = 900;
 
 //Skip is how we adjust resolution. Higher skip is lower res;
-int skip = 20;
+// int skip = 20;
 
 //number of pixels for the kinect to read in
 int width = 32;
@@ -25,9 +25,9 @@ int height = 24;
 float angle;
 
 
-States states;
+States machineStates;
 Transmitter output;
-Transmitter.SignalBuilder signalBuilder;
+SignalBuilder signalBuilder;
 
 void setup(){
 
@@ -41,7 +41,7 @@ void setup(){
   kinect.initDepth();
 
   signalBuilder = new SmallSignalBuilder();
-  states = new States(2, 2);
+  machineStates = new States(2, 2);
   output = new Transmitter(3, 2, 4, signalBuilder);
 }
 
@@ -49,16 +49,19 @@ void draw(){
   
   
   background(255);
-  boolean[] states = new boolean[16];
   depthImg = kinect.getDepthImage();
   int[] depth = kinect.getRawDepth();
   image(depthImg, 0, 0);
-  
-  for (int x = 0; x<depthImg.width; x+= skip){
+  int skip_x = depthImg.width / 2;
+  int skip_y = depthImg.height / 2;
+  for (int x = 0; x<depthImg.width; x+= skip_x){
     
-    for (int y = 0; y<depthImg.height; y+= skip){
+    for (int y = 0; y<depthImg.height; y+= skip_y){
       int index = x + y * depthImg.width;
       int depthVal = depth[index];
+       
+      int panel_x = (x * 2) / depthImg.width;
+      int panel_y = (y * 2) / depthImg.height;
       
       //Index based on x val
       //i2c.beginTransmission(0x60);
@@ -66,24 +69,22 @@ void draw(){
       //byte[] bytes = new byte[2];
       //bytes[1] = byte(y/skip);
       if (depthVal > minDepth && depthVal < maxDepth) {
-        if ((x / 20) < 16) {
-          states[(x / 20)] = true;
-        }
+        
         fill(0);
-        states.updateStateMachine(true);
+          machineStates.updateStateMachine(panel_x, panel_y, true);
         //bytes[0] = 0;
       } else {
         fill(255);
-        states.updateStateMachine(false);
+          machineStates.updateStateMachine(panel_x, panel_y, false);
         //bytes[0] = 1;
       }
       
-      rect(x,y,skip,skip);
+      rect(x,y,skip_x,skip_y);
       
     }
     }
     
-    transmitter.sendStates(states);
+    output.sendStates(machineStates);
   }
  
   // Adjust the angle and the depth threshold min and max

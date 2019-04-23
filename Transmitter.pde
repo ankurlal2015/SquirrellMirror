@@ -15,7 +15,7 @@ public class Transmitter {
         mSpi = new SPI(SPI.list()[0]);
         mSignalBuilder = builder;
         int numBytes = ((numPanels - 1) / 8) + 1;
-        mSignal = new byte[numBytes]
+        mSignal = new byte[numBytes];
         init();
     }
 
