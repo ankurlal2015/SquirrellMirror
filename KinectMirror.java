@@ -1,6 +1,7 @@
 import processing.io.*;
 import org.openkinect.processing.*;
 import java.util.Arrays;
+import java.lang.*;
 
 //https://processing.org/reference/libraries/io/SPI.html
 
@@ -43,6 +44,9 @@ void setup(){
   signalBuilder = new SmallSignalBuilder();
   machineStates = new States(2, 2);
   output = new Transmitter(3, 2, 4, signalBuilder);
+
+  TransmitThread thread = new TransmitThread(output, machineStates);
+  thread.start();
 }
 
 void draw(){
@@ -84,7 +88,7 @@ void draw(){
     }
     }
     
-    output.sendStates(machineStates);
+    // output.sendStates(machineStates);
   }
  
   // Adjust the angle and the depth threshold min and max
@@ -98,4 +102,23 @@ void draw(){
     angle = constrain(angle, 0, 30);
     kinect.setTilt(angle);
   }
+}
+
+class TransmitThread extends Thread {
+
+    private static final int TRANSMIT_PERIOD_MS = 10;
+
+    private final Transmitter mOutput;
+    private final States mStates;
+
+    TransmitThread(Transmitter output, States states) {
+        mOutput = output;
+        mStates = states;
+    }
+    public void run() {
+        while (true) {
+            mOutput.sendStates(mStates);
+            Thread.sleep(TRANSMIT_PERIOD_MS);
+        }
+    }
 }
